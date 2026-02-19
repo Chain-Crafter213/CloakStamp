@@ -41,10 +41,10 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 
 | Field | Value |
 |-------|-------|
-| **Program ID** | `cloakstamp_private_v1.aleo` |
+| **Program ID** | `cloakstamp_private_v2.aleo` |
 | **Network** | Aleo Testnet |
-| **Deploy TX** | [`at14pps...stt2n`](https://explorer.aleo.org/transaction/at14ppsvzmgcm0dyu328vzv67wa0hvggx8ws6wulagk0gl0u03zzuqq2stt2n) |
-| **Initialize TX** | [`at1nkts...62gt`](https://explorer.aleo.org/transaction/at1nkts58r0kjxfpv72mucgr7lg7cx2rz3fq3yg9kqkaml39jjw6cpq0f62gt) |
+| **Deploy TX** | [`at1cj2rq...wsgs`](https://explorer.aleo.org/transaction/at1cj2rqpjza89d4aye66lxtxfr5y3fghk70kcr5dklgdcec67uygpqk6wsgs) |
+| **Fee TX** | [`at1lthje...9cyq`](https://explorer.aleo.org/transaction/at1lthje2c9v233ddrqvag97yqt742fc05nw9plvefw57af4nn89cyq7uvxhj) |
 | **Dependencies** | `credits.aleo` · `test_usdcx_stablecoin.aleo` |
 
 ---
@@ -90,7 +90,7 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 │                    ALEO BLOCKCHAIN (Testnet)                      │
 │                                                                   │
 │  ┌─────────────────────────────────────────────────────────────┐ │
-│  │  cloakstamp_private_v1.aleo                                  │ │
+│  │  cloakstamp_private_v2.aleo                                  │ │
 │  │                                                               │ │
 │  │  Records: IssuerLicense · CertifiedDocument · HolderReceipt  │ │
 │  │           VerificationReceipt · PaymentReceipt               │ │
@@ -98,6 +98,7 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 │  │  Mappings: protocol_admin · registered_issuers               │ │
 │  │            document_exists · revoked_documents               │ │
 │  │            issuance_fees · verification_fees                  │ │
+│  │            registration_fees · total_issuers                  │ │
 │  │            total_certifications · total_verifications         │ │
 │  └─────────────────────────────────────────────────────────────┘ │
 │                                                                   │
@@ -113,11 +114,13 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 ## ⚡ Features
 
 ### Smart Contract
-- **6 transitions** — `initialize`, `register_issuer`, `certify_document`, `certify_document_usdcx`, `prove_document`, `revoke_document`
+- **7 transitions** — `initialize`, `self_register_issuer`, `register_issuer`, `certify_document`, `certify_document_usdcx`, `prove_document`, `revoke_document`
+- **Permissionless registration** — any user can self-register as an issuer by paying a small fee (0.05 ALEO)
 - **5 private record types** — all encrypted, UTXO-based, owned by respective parties
-- **8 boolean mappings** — absolute minimum public state, keyed by BHP256 commitments
+- **10 mappings** — absolute minimum public state, keyed by BHP256 commitments
 - **Dual payment** — ALEO native token or USDCx stablecoin
 - **Cross-program calls** — `credits.aleo` + `test_usdcx_stablecoin.aleo`
+- **Auto-initializing constructor** — protocol admin, fees, and counters set at deploy time
 - **Immutable deployment** — `@noupgrade` constructor
 
 ### Backend
@@ -150,8 +153,9 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 | **Payment Amounts** | Private records only. Public mappings track booleans only |
 | **ALEO Payments** | `transfer_private_to_public` — private record consumed |
 | **USDCx Payments** | Fully private `transfer_private` — zero public trace |
+| **Registration** | Self-registration reveals nothing about the user — only a commitment hash |
 | **Verification** | Zero-knowledge proof. Verifier learns validity, not content |
-| **Mappings** | 8 total — one-way commitment keys, boolean values only |
+| **Mappings** | 10 total — one-way commitment keys, boolean/counter values only |
 | **Backend Data** | All wallet addresses SHA-256 hashed before storage |
 
 ---
@@ -161,8 +165,8 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 ```
 CloakStamp/
 ├── contracts/
-│   └── cloakstamp_private_v1/
-│       ├── src/main.leo              # Leo smart contract (6 transitions)
+│   └── cloakstamp_private_v2/
+│       ├── src/main.leo              # Leo smart contract (7 transitions)
 │       ├── program.json              # Program config + dependencies
 │       └── build/                    # Compiled .aleo artifacts
 │
@@ -243,27 +247,30 @@ CloakStamp/
 
 ### Transitions
 
-| Transition | Description | Payment |
-|------------|-------------|---------|
-| `initialize` | One-time protocol setup: admin, fees, counters | — |
-| `register_issuer` | Admin registers a certification authority | — |
-| `certify_document` | Issuer certifies document, holder receives record | ALEO |
-| `certify_document_usdcx` | Same certification, paid in USDCx stablecoin | USDCx |
-| `prove_document` | Holder proves ownership, verifier gets receipt | ALEO |
-| `revoke_document` | Issuer revokes a certification | — |
+| Transition | Description | Payment | Who Can Call |
+|------------|-------------|---------|-------------|
+| `initialize` | One-time protocol setup: admin, fees, counters | — | Deployer (auto at deploy) |
+| `self_register_issuer` | **Any user** self-registers as issuer by paying a fee | 0.05 ALEO | **Anyone** |
+| `register_issuer` | Admin registers an issuer for free (institutional grants) | — | Admin only |
+| `certify_document` | Issuer certifies document, holder receives record | 0.1 ALEO | Registered issuer |
+| `certify_document_usdcx` | Same certification, paid in USDCx stablecoin | USDCx | Registered issuer |
+| `prove_document` | Holder proves ownership, verifier gets receipt | 0.05 ALEO | Document holder |
+| `revoke_document` | Issuer revokes a certification | — | Original issuer |
 
-### On-Chain Mappings (8 Total)
+### On-Chain Mappings (10 Total)
 
 | Mapping | Key → Value | Purpose |
-|---------|-------------|---------|
+|---------|-------------|--------|
 | `protocol_admin` | `u8 → address` | Governance admin |
 | `registered_issuers` | `field → bool` | `BHP256(issuer)` → registered |
 | `document_exists` | `field → bool` | `BHP256(doc+issuer)` → certified |
 | `revoked_documents` | `field → bool` | `BHP256(doc+issuer)` → revoked |
-| `issuance_fees` | `u8 → u64` | Fee config (microcredits) |
-| `verification_fees` | `u8 → u64` | Fee config (microcredits) |
-| `total_certifications` | `u8 → u64` | Global counter |
-| `total_verifications` | `u8 → u64` | Global counter |
+| `issuance_fees` | `u8 → u64` | Certification fee config (microcredits) |
+| `verification_fees` | `u8 → u64` | Verification fee config (microcredits) |
+| `registration_fees` | `u8 → u64` | Self-registration fee config (microcredits) |
+| `total_issuers` | `u8 → u64` | Global issuer counter |
+| `total_certifications` | `u8 → u64` | Global certification counter |
+| `total_verifications` | `u8 → u64` | Global verification counter |
 
 ---
 
@@ -272,11 +279,13 @@ CloakStamp/
 ### Certification Flow
 
 ```
- Issuer                          Blockchain                        Holder
+ User                            Blockchain                        Holder
    │                                 │                                │
-   │  1. register_issuer(addr)       │                                │
+   │  1. self_register_issuer(       │                                │
+   │     credits, fee)               │                                │
    │────────────────────────────────>│  → IssuerLicense record        │
    │                                 │  → registered_issuers = true   │
+   │                                 │  → total_issuers += 1          │
    │                                 │                                │
    │  2. certify_document(holder,    │                                │
    │     doc_hash, category, expiry, │                                │
@@ -349,7 +358,7 @@ npm install
 PORT=3001
 JWT_SECRET=your_secure_secret_here
 CORS_ORIGIN=http://localhost:5173
-ALEO_PROGRAM_ID=cloakstamp_private_v1.aleo
+ALEO_PROGRAM_ID=cloakstamp_private_v2.aleo
 PROVABLE_API_BASE=https://api.explorer.provable.com/v1/testnet
 ```
 
@@ -357,7 +366,7 @@ PROVABLE_API_BASE=https://api.explorer.provable.com/v1/testnet
 
 ```env
 VITE_API_BASE_URL=http://localhost:3001
-VITE_ALEO_PROGRAM_ID=cloakstamp_private_v1.aleo
+VITE_ALEO_PROGRAM_ID=cloakstamp_private_v2.aleo
 ```
 
 ### Run Locally
@@ -445,7 +454,8 @@ Open **http://localhost:5173** → connect Shield Wallet → start certifying!
 | Decision | Rationale |
 |----------|-----------|
 | BHP256 commitments as mapping keys | Unlinkable — no raw addresses or data on public chain |
-| 8 boolean-only mappings | Absolute minimum public state needed for validation |
+| 10 minimal mappings | Absolute minimum public state: commitments + booleans + counters |
+| Permissionless self-registration | Any user can become an issuer — no gatekeeping, true dApp |
 | Dual payment (ALEO + USDCx) | Native token for simplicity, stablecoin for price stability |
 | `@noupgrade` constructor | Immutable protocol — deployed code cannot be modified |
 | 3-strategy record decryption | Shield Wallet compatibility: direct → ciphertext → block API |
@@ -469,7 +479,7 @@ Open **http://localhost:5173** → connect Shield Wallet → start certifying!
 | Variable | Value |
 |----------|-------|
 | `VITE_API_BASE_URL` | `https://your-backend.onrender.com` |
-| `VITE_ALEO_PROGRAM_ID` | `cloakstamp_private_v1.aleo` |
+| `VITE_ALEO_PROGRAM_ID` | `cloakstamp_private_v2.aleo` |
 
 6. Deploy! The `vercel.json` SPA rewrite is already configured.
 
@@ -492,7 +502,7 @@ Open **http://localhost:5173** → connect Shield Wallet → start certifying!
 | `PORT` | `3001` (or Render's default) |
 | `JWT_SECRET` | `your_strong_secret_here` |
 | `CORS_ORIGIN` | `https://your-frontend.vercel.app` |
-| `ALEO_PROGRAM_ID` | `cloakstamp_private_v1.aleo` |
+| `ALEO_PROGRAM_ID` | `cloakstamp_private_v2.aleo` |
 | `PROVABLE_API_BASE` | `https://api.explorer.provable.com/v1/testnet` |
 
 ### Contract (Already Deployed)
@@ -500,7 +510,7 @@ Open **http://localhost:5173** → connect Shield Wallet → start certifying!
 The smart contract is already live on Aleo Testnet. To deploy a new version:
 
 ```bash
-cd contracts/cloakstamp_private_v1
+cd contracts/cloakstamp_private_v2
 # Update program name in program.json (e.g., cloakstamp_private_v2.aleo)
 leo deploy --network testnet --broadcast --yes
 leo execute initialize --network testnet --broadcast --yes

@@ -5,6 +5,18 @@
       "state": "active",
       "enrolledAt": "2026-02-19T02:11:50.026Z",
       "chainTxRef": "shield_1771467109992_ufmleaojpoo"
+    },
+    "16a4a094fbddf626a4380102be5f5988010a60cef67b263149222ab9e834fabc": {
+      "hashedAddr": "16a4a094fbddf626a4380102be5f5988010a60cef67b263149222ab9e834fabc",
+      "state": "active",
+      "enrolledAt": "2026-02-19T19:38:21.110Z",
+      "chainTxRef": "shield_1771529901096_o9h3ncr3x3h"
+    },
+    "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57": {
+      "hashedAddr": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "state": "active",
+      "enrolledAt": "2026-02-19T19:40:54.127Z",
+      "chainTxRef": "shield_1771530054113_3lmwy7n5yqb"
     }
   },
   "certifications": {
@@ -40,6 +52,17 @@
       "chainTxRef": "shield_1771474401844_wxcd487852i",
       "stampedAt": "2026-02-19T04:13:21.877Z",
       "expiryBlock": 0
+    },
+    "e6e8fa67-5c26-4195-994d-22d61b5f302d": {
+      "uid": "e6e8fa67-5c26-4195-994d-22d61b5f302d",
+      "commitment": "7269641931623498994929839129833114009997242261539245783331734943319781523967field",
+      "authorityHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "recipientHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "tag": "Academic Credential",
+      "state": "active",
+      "chainTxRef": "shield_1771530108140_ryc9bb893j",
+      "stampedAt": "2026-02-19T19:41:48.155Z",
+      "expiryBlock": 0
     }
   },
   "proofEntries": {
@@ -66,6 +89,14 @@
       "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
       "chainTxRef": "shield_1771474521776_ueyeuhd5nxg",
       "stampedAt": "2026-02-19T04:15:21.789Z"
+    },
+    "b242ff57-a732-433a-b3a3-da0160191179": {
+      "uid": "b242ff57-a732-433a-b3a3-da0160191179",
+      "docCommitment": "7269641931623498994929839129833114009997242261539245783331734943319781523967field",
+      "inspectorHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "recipientHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "chainTxRef": "shield_1771530236106_cthna5sf26u",
+      "stampedAt": "2026-02-19T19:43:56.121Z"
     }
   },
   "challengeTokens": {},
@@ -177,6 +208,50 @@
         "chainTxRef": "shield_1771474521776_ueyeuhd5nxg"
       },
       "occurredAt": "2026-02-19T04:15:21.789Z"
+    },
+    {
+      "uid": "52376b6c-91e0-4da7-86cb-cc789db27fd3",
+      "kind": "authority_enrolled",
+      "actorHash": "16a4a094fbddf626a4380102be5f5988010a60cef67b263149222ab9e834fabc",
+      "payload": {
+        "authorityHash": "16a4a094fbddf626a4380102be5f5988010a60cef67b263149222ab9e834fabc",
+        "chainTxRef": "shield_1771529901096_o9h3ncr3x3h"
+      },
+      "occurredAt": "2026-02-19T19:38:21.111Z"
+    },
+    {
+      "uid": "f332d8ee-7846-44d5-811d-3cee72109e84",
+      "kind": "authority_enrolled",
+      "actorHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "payload": {
+        "authorityHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+        "chainTxRef": "shield_1771530054113_3lmwy7n5yqb"
+      },
+      "occurredAt": "2026-02-19T19:40:54.127Z"
+    },
+    {
+      "uid": "9611c86a-7f00-48f5-91bd-a29ca9903573",
+      "kind": "doc_certified",
+      "actorHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "payload": {
+        "certId": "e6e8fa67-5c26-4195-994d-22d61b5f302d",
+        "tag": "Academic Credential",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771530108140_ryc9bb893j"
+      },
+      "occurredAt": "2026-02-19T19:41:48.155Z"
+    },
+    {
+      "uid": "749e7167-2a93-41f9-8708-6be4a8b7772b",
+      "kind": "doc_proved",
+      "actorHash": "46912287097b137954be256f30c8acc7af379def0590286cbd72b1c44948cb57",
+      "payload": {
+        "proofId": "b242ff57-a732-433a-b3a3-da0160191179",
+        "docCommitment": "7269641931623498994929839129833114009997242261539245783331734943319781523967field",
+        "chainTxRef": "shield_1771530236106_cthna5sf26u"
+      },
+      "occurredAt": "2026-02-19T19:43:56.121Z"
     }
   ]
 }

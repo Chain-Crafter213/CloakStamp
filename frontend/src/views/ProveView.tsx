@@ -7,7 +7,7 @@ import { ActionButton, GlassCard } from '../fragments/shared';
 import { submitProof } from '../toolkit/gateway';
 import { useIdentity } from '../composables/useIdentity';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v1.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
 const BASE_FEE = 1_000_000; // 1 ALEO in microcredits
 
 /** Extract plaintext string from a record returned by requestRecords() */

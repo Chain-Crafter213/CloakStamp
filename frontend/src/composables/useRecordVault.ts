@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useWallet } from '@provablehq/aleo-wallet-adaptor-react';
 import { parseRecordFields, fetchCiphertextFromBlock } from '../toolkit/chain';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v1.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
 
 export interface DecodedRecord {
   type: string;
@@ -47,7 +47,7 @@ function classifyRecord(rec: Record<string, unknown>, fields: Record<string, str
     return 'CertifiedDocument';
   }
   if (fn === 'prove_document') return 'VerificationReceipt';
-  if (fn === 'register_issuer') return 'IssuerLicense';
+  if (fn === 'register_issuer' || fn === 'self_register_issuer') return 'IssuerLicense';
 
   return 'unknown';
 }

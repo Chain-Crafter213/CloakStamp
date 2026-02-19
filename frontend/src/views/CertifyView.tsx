@@ -9,7 +9,7 @@ import { scaleUsdcx } from '../toolkit/stablecoin';
 import { stampDocument, enrollAuthority, checkAuthority, fetchHolderCerts } from '../toolkit/gateway';
 import { useIdentity } from '../composables/useIdentity';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v1.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
 const BASE_FEE = 1_000_000; // 1 ALEO in microcredits — Shield Wallet requires non-zero fee
 const CATEGORIES = [
   { value: 1, label: 'Academic Credential' },
@@ -75,7 +75,7 @@ export default function CertifyView() {
     }
   };
 
-  // Register as issuer
+  // Register as issuer — self-registration, any user can do this
   const registerAsIssuer = async () => {
     const addr = effectiveAddr || useSessionStore.getState().walletAddr;
     const sess = session || useSessionStore.getState().session;
@@ -86,11 +86,44 @@ export default function CertifyView() {
     setRegistering(true);
     setError(null);
     try {
-      // executeTransaction is from the WalletContextState (useWallet hook)
+      // Find a credits record for the registration fee
+      let recordPlaintext: string | null = null;
+      try {
+        const records = await requestRecords('credits.aleo');
+        for (const r of (records || []) as any[]) {
+          if (r.spent) continue;
+          if (r.recordPlaintext) { recordPlaintext = r.recordPlaintext; break; }
+          if (typeof r === 'string' && r.includes('microcredits')) { recordPlaintext = r; break; }
+          const ct = r.ciphertext || r.recordCiphertext;
+          if (ct && decrypt) {
+            try { const pt = await decrypt(ct); if (pt && typeof pt === 'string') { recordPlaintext = pt; break; } } catch { /* try next */ }
+          }
+          if (r.owner || r.data?.microcredits) {
+            let owner = String(r.owner || '');
+            if (!owner.endsWith('.private')) owner += '.private';
+            const mcRaw = String(r.data?.microcredits || r.microcredits || '0');
+            const mcVal = mcRaw.match(/(\d[\d_]*)/)?.[1]?.replace(/_/g, '') || '0';
+            let nonce = String(r.nonce || r._nonce || '0group.public');
+            if (!nonce.includes('group')) nonce += 'group.public';
+            recordPlaintext = `{\n  owner: ${owner},\n  microcredits: ${mcVal}u64.private,\n  _nonce: ${nonce}\n}`;
+            break;
+          }
+        }
+      } catch (e) {
+        console.warn('[Register] Could not fetch credits records:', e);
+      }
+
+      if (!recordPlaintext) {
+        throw new Error('No usable credits record found. You need ALEO credits to pay the registration fee (0.05 ALEO). Try shielding more credits in your Shield Wallet.');
+      }
+
+      const regFee = 50_000; // 0.05 ALEO registration fee in microcredits
+
+      // self_register_issuer — permissionless, any user can call this
       const result = await executeTransaction({
         program: PROGRAM_ID,
-        function: 'register_issuer',
-        inputs: [addr],
+        function: 'self_register_issuer',
+        inputs: [recordPlaintext, `${regFee}u64`],
         fee: BASE_FEE,
         privateFee: false,
       });
@@ -290,11 +323,14 @@ export default function CertifyView() {
 
         {isIssuer === false && (
           <GlassCard className="mb-8">
-            <p className="text-yellow-400 font-manrope mb-4">
-              You are not registered as an issuer. Register to start certifying documents.
+            <p className="text-yellow-400 font-manrope mb-2">
+              You are not yet registered as an issuer on the protocol.
+            </p>
+            <p className="text-gray-400 font-manrope text-sm mb-4">
+              Registration costs 0.05 ALEO (one-time fee). Once registered, you can certify documents for any holder with full privacy.
             </p>
             <ActionButton onClick={registerAsIssuer} loading={registering}>
-              Register as Issuer
+              Register as Issuer (0.05 ALEO)
             </ActionButton>
           </GlassCard>
         )}

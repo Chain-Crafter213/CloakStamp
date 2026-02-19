@@ -1,7 +1,7 @@
 import credits.aleo;
 import test_usdcx_stablecoin.aleo;
 
-program cloakstamp_private_v1.aleo {
+program cloakstamp_private_v2.aleo {
 
     // ═══════════════════════════════════════════════════════════════
     // STRUCTS
@@ -63,10 +63,10 @@ program cloakstamp_private_v1.aleo {
     // MAPPINGS — MINIMAL PUBLIC STATE (commitments + booleans only)
     // ═══════════════════════════════════════════════════════════════
 
-    // Governance: protocol_admin[0u8] = deployer address (only address stored publicly)
+    // Governance: protocol_admin[0u8] = deployer address
     mapping protocol_admin: u8 => address;
 
-    // BHP256(issuer_address) => true — registered certification authorities
+    // BHP256(issuer_address) => true — registered issuers (self-registered or admin-registered)
     mapping registered_issuers: field => bool;
 
     // BHP256(doc_hash + issuer_address) => true — certified documents
@@ -81,12 +81,16 @@ program cloakstamp_private_v1.aleo {
     // Singleton fee configs: verification_fees[0u8] = fee in microcredits
     mapping verification_fees: u8 => u64;
 
+    // Registration fee for self_register_issuer
+    mapping registration_fees: u8 => u64;
+
     // Global counters for protocol stats
     mapping total_certifications: u8 => u64;
     mapping total_verifications: u8 => u64;
+    mapping total_issuers: u8 => u64;
 
     // ═══════════════════════════════════════════════════════════════
-    // CONSTRUCTOR — runs once at deployment, sets up protocol state
+    // CONSTRUCTOR — runs once at deployment
     // ═══════════════════════════════════════════════════════════════
 
     @noupgrade
@@ -94,7 +98,10 @@ program cloakstamp_private_v1.aleo {
 
     // ═══════════════════════════════════════════════════════════════
     // TRANSITION: initialize — one-time protocol setup (post-deploy)
-    // Only works if protocol_admin is not yet set
+    // Call this ONCE after deployment to set admin + default fees.
+    // If you skip this, self_register_issuer still works because it
+    // uses get_or_use with safe defaults. Only admin-register and
+    // USDCx certify require initialization.
     // ═══════════════════════════════════════════════════════════════
 
     async transition initialize() -> Future {
@@ -114,17 +121,73 @@ program cloakstamp_private_v1.aleo {
         // Set caller as protocol admin
         Mapping::set(protocol_admin, 0u8, caller);
 
-        // Default fees: 100_000 microcredits (0.1 ALEO) for issuance, 50_000 for verification
+        // Default fees
         Mapping::set(issuance_fees, 0u8, 100_000u64);
         Mapping::set(verification_fees, 0u8, 50_000u64);
+        Mapping::set(registration_fees, 0u8, 50_000u64);
 
         // Initialize counters
         Mapping::set(total_certifications, 0u8, 0u64);
         Mapping::set(total_verifications, 0u8, 0u64);
+        Mapping::set(total_issuers, 0u8, 0u64);
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // TRANSITION: register_issuer — admin registers a new issuer
+    // TRANSITION: self_register_issuer — ANY user can register themselves
+    // by paying a small registration fee. Fully permissionless & private.
+    // ═══════════════════════════════════════════════════════════════
+
+    async transition self_register_issuer(
+        pay_record: credits.aleo/credits,
+        fee_amount: u64
+    ) -> (IssuerLicense, credits.aleo/credits, Future) {
+
+        assert(fee_amount > 0u64);
+
+        let issuer_commitment: field = BHP256::hash_to_field(self.signer as field);
+        let seed: field = BHP256::hash_to_field(self.signer as field + fee_amount as field);
+
+        let license: IssuerLicense = IssuerLicense {
+            owner: self.signer,
+            license_commitment: issuer_commitment,
+            nonce_seed: seed
+        };
+
+        // Pay registration fee to protocol's public balance
+        let (change, transfer_f): (credits.aleo/credits, Future) =
+            credits.aleo/transfer_private_to_public(pay_record, self.address, fee_amount);
+
+        let f: Future = finalize_self_register(transfer_f, issuer_commitment, fee_amount);
+        return (license, change, f);
+    }
+
+    async function finalize_self_register(
+        transfer_f: Future,
+        issuer_commitment: field,
+        fee_amount: u64
+    ) {
+        // Execute the credits transfer
+        transfer_f.await();
+
+        // Prevent double registration
+        let already: bool = Mapping::get_or_use(registered_issuers, issuer_commitment, false);
+        assert(!already);
+
+        // Verify fee meets minimum registration fee
+        let min_fee: u64 = Mapping::get_or_use(registration_fees, 0u8, 50_000u64);
+        assert(fee_amount >= min_fee);
+
+        // Register the issuer
+        Mapping::set(registered_issuers, issuer_commitment, true);
+
+        // Increment issuer counter
+        let current_count: u64 = Mapping::get_or_use(total_issuers, 0u8, 0u64);
+        Mapping::set(total_issuers, 0u8, current_count + 1u64);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // TRANSITION: register_issuer — admin registers an issuer for FREE
+    // (kept for admin to grant free access to trusted institutions)
     // ═══════════════════════════════════════════════════════════════
 
     async transition register_issuer(
@@ -147,7 +210,7 @@ program cloakstamp_private_v1.aleo {
         caller: address,
         issuer_commitment: field
     ) {
-        // Only protocol admin can register issuers
+        // Only protocol admin can register issuers for free
         let admin: address = Mapping::get(protocol_admin, 0u8);
         assert_eq(caller, admin);
 
@@ -156,6 +219,10 @@ program cloakstamp_private_v1.aleo {
         assert(!already);
 
         Mapping::set(registered_issuers, issuer_commitment, true);
+
+        // Increment issuer counter
+        let current_count: u64 = Mapping::get_or_use(total_issuers, 0u8, 0u64);
+        Mapping::set(total_issuers, 0u8, current_count + 1u64);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -228,7 +295,7 @@ program cloakstamp_private_v1.aleo {
         // Execute the credits transfer
         transfer_f.await();
 
-        // Verify issuer is registered
+        // Verify issuer is registered (self-registered or admin-registered)
         let is_registered: bool = Mapping::get_or_use(registered_issuers, issuer_commitment, false);
         assert(is_registered);
 
