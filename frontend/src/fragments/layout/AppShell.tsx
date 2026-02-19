@@ -49,7 +49,7 @@ function TxToast({ tx, onDismiss }: { tx: import('../../state/txTracker').Tracke
     : displayId;
 
   const explorerUrl = displayId.startsWith('at1')
-    ? `https://explorer.provable.com/transaction/${displayId}`
+    ? `https://testnet.explorer.provable.com/transaction/${displayId}`
     : null;
 
   return (

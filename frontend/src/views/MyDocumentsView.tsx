@@ -9,7 +9,7 @@ import type { CertificationRecord } from '../toolkit/interfaces';
 
 /* ──────────────────────────── helpers ──────────────────────────── */
 
-const EXPLORER_TX = 'https://explorer.provable.com/transaction/';
+const EXPLORER_TX = 'https://testnet.explorer.provable.com/transaction/';
 
 /** Category → icon SVG + accent  */
 const CATEGORY_META: Record<string, { icon: JSX.Element; accent: string; bg: string; border: string; glow: string; topGrad: string; orb: string }> = {

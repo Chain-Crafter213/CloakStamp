@@ -8,7 +8,7 @@
 
 [![Aleo](https://img.shields.io/badge/Built%20on-Aleo-7b39fc?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABdSURBVDhPY/wPBAxUBExQmmpg1EaqAUYGBgZGqGgMIKYMAtlIbUcTNDAAOZgBaAMzEGMDQJoZsGmkCBiANDMQ0kgROIDUEXIj2QBJI7qN5AGkYKK6P6kPGBgAAPVbDM0RDiIAAAAASUVORK5CYII=)](https://aleo.org/)
 [![Leo](https://img.shields.io/badge/Language-Leo-a78bfa?style=for-the-badge)](https://developer.aleo.org/leo/)
-[![Network](https://img.shields.io/badge/Network-Testnet-00d084?style=for-the-badge)](https://explorer.aleo.org/)
+[![Network](https://img.shields.io/badge/Network-Testnet-00d084?style=for-the-badge)](https://testnet.explorer.provable.com/)
 [![React](https://img.shields.io/badge/Frontend-React%2018-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
@@ -43,8 +43,8 @@ CloakStamp is a **zero-knowledge document certification protocol** that enables 
 |-------|-------|
 | **Program ID** | `cloakstamp_private_v2.aleo` |
 | **Network** | Aleo Testnet |
-| **Deploy TX** | [`at1cj2rq...wsgs`](https://explorer.aleo.org/transaction/at1cj2rqpjza89d4aye66lxtxfr5y3fghk70kcr5dklgdcec67uygpqk6wsgs) |
-| **Fee TX** | [`at1lthje...9cyq`](https://explorer.aleo.org/transaction/at1lthje2c9v233ddrqvag97yqt742fc05nw9plvefw57af4nn89cyq7uvxhj) |
+| **Deploy TX** | [`at1cj2rq...wsgs`](https://testnet.explorer.provable.com/transaction/at1cj2rqpjza89d4aye66lxtxfr5y3fghk70kcr5dklgdcec67uygpqk6wsgs) |
+| **Fee TX** | [`at1lthje...9cyq`](https://testnet.explorer.provable.com/transaction/at1lthje2c9v233ddrqvag97yqt742fc05nw9plvefw57af4nn89cyq7uvxhj) |
 | **Dependencies** | `credits.aleo` · `test_usdcx_stablecoin.aleo` |
 
 ---

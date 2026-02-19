@@ -49,7 +49,7 @@ export default function SiteFooter() {
             <ul className="space-y-2">
               {[
                 { href: 'https://aleo.org', label: 'Aleo Network' },
-                { href: 'https://explorer.aleo.org', label: 'Block Explorer' },
+                { href: 'https://testnet.explorer.provable.com', label: 'Block Explorer' },
                 { href: 'https://developer.aleo.org', label: 'Developer Docs' },
               ].map((link) => (
                 <li key={link.href}>

@@ -197,7 +197,7 @@ export default function VerifyView() {
                       <span className="text-gray-500 font-manrope">Chain TX</span>
                       {result.chainTxRef.startsWith('at1') ? (
                         <a
-                          href={`https://explorer.provable.com/transaction/${result.chainTxRef}`}
+                          href={`https://testnet.explorer.provable.com/transaction/${result.chainTxRef}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-cs-accent/80 hover:text-cs-accent font-mono truncate ml-2 transition-colors"
