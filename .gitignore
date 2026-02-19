@@ -1,0 +1,102 @@
+# ========================
+# Node.js
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env*.local
+backend/.env
+frontend/.env
+
+# ========================
+# Build Outputs
+# ========================
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# ========================
+# Frontend (Vite / React)
+# ========================
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+
+# ========================
+# Backend (Express / TS)
+# ========================
+backend/dist/
+backend/node_modules/
+
+# ========================
+# Leo / Aleo Contract
+# ========================
+contracts/*/outputs/
+contracts/*/.env
+*.prover
+*.verifier
+*.avm
+
+# ========================
+# IDE & Editor
+# ========================
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+
+# ========================
+# Testing
+# ========================
+coverage/
+.nyc_output/
+
+# ========================
+# Misc
+# ========================
+*.tgz
+*.gz
+*.zip
+.cache/
+.parcel-cache/
+.temp/
+.tmp/
+
+guide.md
+summary.md

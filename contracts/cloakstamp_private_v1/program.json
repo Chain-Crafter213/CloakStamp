@@ -1,0 +1,18 @@
+{
+  "program": "cloakstamp_private_v1.aleo",
+  "version": "1.0.0",
+  "description": "CloakStamp — Privacy-first document certification and verification protocol on Aleo",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "credits.aleo",
+      "location": "network",
+      "network": "testnet"
+    },
+    {
+      "name": "test_usdcx_stablecoin.aleo",
+      "location": "network",
+      "network": "testnet"
+    }
+  ]
+}

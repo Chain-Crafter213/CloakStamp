@@ -1,0 +1,182 @@
+{
+  "authorities": {
+    "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155": {
+      "hashedAddr": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "state": "active",
+      "enrolledAt": "2026-02-19T02:11:50.026Z",
+      "chainTxRef": "shield_1771467109992_ufmleaojpoo"
+    }
+  },
+  "certifications": {
+    "df347479-fd42-4689-a7bc-2f56fe6bbc2c": {
+      "uid": "df347479-fd42-4689-a7bc-2f56fe6bbc2c",
+      "commitment": "5945508372419161567921436578015719256399617409572008583767640308819595987025field",
+      "authorityHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "tag": "Academic Credential",
+      "state": "active",
+      "chainTxRef": "shield_1771468827399_nmxkfgy7cjd",
+      "stampedAt": "2026-02-19T02:40:27.410Z",
+      "expiryBlock": 0
+    },
+    "1eecb70e-d14a-4643-99e7-9073b11eb1dc": {
+      "uid": "1eecb70e-d14a-4643-99e7-9073b11eb1dc",
+      "commitment": "5339093725881320832592981519886276669842623584096928757450061303877147279186field",
+      "authorityHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "tag": "Identity Document",
+      "state": "active",
+      "chainTxRef": "shield_1771472221091_bstin6du1e4",
+      "stampedAt": "2026-02-19T03:37:01.104Z",
+      "expiryBlock": 0
+    },
+    "20114e01-4905-48a2-b847-16478d533efc": {
+      "uid": "20114e01-4905-48a2-b847-16478d533efc",
+      "commitment": "3251508675663170334564747789557746255298782453394505796969044931766898196725field",
+      "authorityHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "tag": "Academic Credential",
+      "state": "active",
+      "chainTxRef": "shield_1771474401844_wxcd487852i",
+      "stampedAt": "2026-02-19T04:13:21.877Z",
+      "expiryBlock": 0
+    }
+  },
+  "proofEntries": {
+    "1b08f1c4-f64b-4e47-9ddd-ad2358571a02": {
+      "uid": "1b08f1c4-f64b-4e47-9ddd-ad2358571a02",
+      "docCommitment": "5945508372419161567921436578015719256399617409572008583767640308819595987025field",
+      "inspectorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "chainTxRef": "shield_1771471321739_pagq9ckr5ao",
+      "stampedAt": "2026-02-19T03:22:01.779Z"
+    },
+    "b17cdd33-fd07-4b71-b086-4848e352a834": {
+      "uid": "b17cdd33-fd07-4b71-b086-4848e352a834",
+      "docCommitment": "5945508372419161567921436578015719256399617409572008583767640308819595987025field",
+      "inspectorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "chainTxRef": "shield_1771471861555_0t90mydbrgpa",
+      "stampedAt": "2026-02-19T03:31:01.569Z"
+    },
+    "677bd341-d60a-401b-962a-3557e77d9e27": {
+      "uid": "677bd341-d60a-401b-962a-3557e77d9e27",
+      "docCommitment": "3251508675663170334564747789557746255298782453394505796969044931766898196725field",
+      "inspectorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "recipientHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "chainTxRef": "shield_1771474521776_ueyeuhd5nxg",
+      "stampedAt": "2026-02-19T04:15:21.789Z"
+    }
+  },
+  "challengeTokens": {},
+  "auditLog": [
+    {
+      "uid": "65b71d22-8ba6-4131-970d-eba8438ad51c",
+      "kind": "authority_enrolled",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "authorityHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+        "chainTxRef": "shield_1771467109992_ufmleaojpoo"
+      },
+      "occurredAt": "2026-02-19T02:11:50.026Z"
+    },
+    {
+      "uid": "a5df4c6a-9d47-4234-b5ab-ca28940e1e81",
+      "kind": "doc_certified",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "certId": "0fff3990-3af2-4829-b425-f58187b23469",
+        "tag": "Academic Credential",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771467931657_mibp0ce4rsd"
+      },
+      "occurredAt": "2026-02-19T02:25:31.671Z"
+    },
+    {
+      "uid": "8b2a21a1-2838-468c-9bae-b766ae77fcd8",
+      "kind": "doc_certified",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "certId": "df347479-fd42-4689-a7bc-2f56fe6bbc2c",
+        "tag": "Academic Credential",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771468827399_nmxkfgy7cjd"
+      },
+      "occurredAt": "2026-02-19T02:40:27.410Z"
+    },
+    {
+      "uid": "af68bfb1-1bcb-4acd-aa42-2384a130b43b",
+      "kind": "doc_proved",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "proofId": "1b08f1c4-f64b-4e47-9ddd-ad2358571a02",
+        "docCommitment": "5945508372419161567921436578015719256399617409572008583767640308819595987025field.private",
+        "chainTxRef": "shield_1771471321739_pagq9ckr5ao"
+      },
+      "occurredAt": "2026-02-19T03:22:01.779Z"
+    },
+    {
+      "uid": "8420a50a-5311-4a60-ab4a-0d13847f894d",
+      "kind": "doc_proved",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "proofId": "b17cdd33-fd07-4b71-b086-4848e352a834",
+        "docCommitment": "5945508372419161567921436578015719256399617409572008583767640308819595987025field.private",
+        "chainTxRef": "shield_1771471861555_0t90mydbrgpa"
+      },
+      "occurredAt": "2026-02-19T03:31:01.569Z"
+    },
+    {
+      "uid": "0e3a0f64-4f5d-4df8-b627-521191ff60ca",
+      "kind": "doc_certified",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "certId": "1eecb70e-d14a-4643-99e7-9073b11eb1dc",
+        "tag": "Identity Document",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771472221091_bstin6du1e4"
+      },
+      "occurredAt": "2026-02-19T03:37:01.104Z"
+    },
+    {
+      "uid": "9e9bf638-6ff3-40a9-abdd-625ecba98340",
+      "kind": "doc_certified",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "certId": "b0784949-426b-4fd1-aa0b-f0bb264e6e51",
+        "tag": "Identity Document",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771472599223_ogjzjyjxgk"
+      },
+      "occurredAt": "2026-02-19T03:43:19.260Z"
+    },
+    {
+      "uid": "5d074d80-f4dd-4326-9007-0fc32cb5e1bf",
+      "kind": "doc_certified",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "certId": "20114e01-4905-48a2-b847-16478d533efc",
+        "tag": "Academic Credential",
+        "payMethod": "aleo",
+        "feeValue": 100000,
+        "chainTxRef": "shield_1771474401844_wxcd487852i"
+      },
+      "occurredAt": "2026-02-19T04:13:21.877Z"
+    },
+    {
+      "uid": "1259f2be-29a2-4efa-9a9d-14916b1697be",
+      "kind": "doc_proved",
+      "actorHash": "cbe1087c6e0f59001916cd7f002fe2eb1cdaa28104e9dfdd2bb2fd7daeed6155",
+      "payload": {
+        "proofId": "677bd341-d60a-401b-962a-3557e77d9e27",
+        "docCommitment": "3251508675663170334564747789557746255298782453394505796969044931766898196725field.private",
+        "chainTxRef": "shield_1771474521776_ueyeuhd5nxg"
+      },
+      "occurredAt": "2026-02-19T04:15:21.789Z"
+    }
+  ]
+}
