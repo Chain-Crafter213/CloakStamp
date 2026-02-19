@@ -518,6 +518,83 @@ leo execute initialize --network testnet --broadcast --yes
 
 ---
 
+## 🔭 Vision & Roadmap
+
+CloakStamp is built to become **the standard privacy layer for document trust on the web**. Every institution, individual, and protocol that needs to prove something without revealing everything is a potential user. Here is where we are going.
+
+---
+
+### 🌍 Mainnet Deployment
+
+The protocol is currently live on **Aleo Testnet** for validation and real-world testing. The next major milestone is a full **Aleo Mainnet deployment** — making certifications permanent, economically meaningful, and production-grade. The contract architecture, fee model, and dual-currency payments are all designed with mainnet economics in mind from day one.
+
+---
+
+### 🛠️ Near-Term Improvements
+
+These are protocol and UX upgrades that directly increase real-world usability:
+
+| # | Improvement | Impact |
+|---|-------------|--------|
+| 1 | **Verifier Portal** | A dedicated page where any party can paste a `VerificationReceipt` commitment and instantly confirm validity on-chain — the demand side of the ecosystem |
+| 2 | **QR Code Sharing** | Holders generate a scannable QR code encoding their proof parameters. A verifier scans → triggers ZK verification → receives receipt. Enables real-world use at job fairs, hospitals, border crossings |
+| 3 | **Expiry Dashboard** | The contract already stores `expires_at`. Surface this with countdown timers, expiry warnings, and one-click renewal requests |
+| 4 | **Batch Certification** | A single transaction certifies multiple documents. Critical for universities issuing hundreds of diplomas or enterprises onboarding large cohorts |
+| 5 | **Fee Withdrawal** | Add a `withdraw_fees` transition so the protocol admin can claim accumulated ALEO and USDCx fees from the program's public balance |
+| 6 | **Admin Panel** | A dedicated UI for the protocol admin to manage registered issuers, view global stats, adjust fees, and monitor revocations |
+
+---
+
+### 📈 Mid-Term Growth
+
+Features that grow the ecosystem and make CloakStamp a platform rather than just a tool:
+
+| # | Feature | What It Enables |
+|---|---------|----------------|
+| 7 | **Issuer Marketplace** | Registered issuers list their services, pricing, and trust scores. Holders browse and request certifications directly in-app — creates a two-sided marketplace |
+| 8 | **TypeScript SDK** | A published npm package (`@cloakstamp/sdk`) so any dApp can call `certify`, `prove`, and `verify` programmatically. A DeFi protocol could verify a borrower's income attestation before approving a loan |
+| 9 | **Multi-Issuer Co-signing** | Critical documents (notarized contracts, medical records with multiple signatories) require 2+ registered issuers to certify before the document is considered valid on-chain |
+| 10 | **On-Chain Renewal** | A `renew_document` transition extends `expires_at` on existing certifications without creating duplicates — required for annual licenses, recurring memberships |
+| 11 | **Mobile Wallet Support** | Extend wallet adapter support to mobile-first wallets so holders and issuers can operate entirely from a smartphone |
+| 12 | **IPFS Document Anchoring** | Optionally anchor the document's IPFS CID alongside the BHP256 commitment — holders get decentralized storage, issuers get content-addressable proof of what they certified |
+
+---
+
+### 🏗️ Long-Term Protocol Evolution
+
+Architectural changes that make CloakStamp a foundational layer of the privacy web:
+
+| # | Initiative | Description |
+|---|-----------|-------------|
+| 13 | **Cross-Chain Proof Bridging** | Export Aleo ZK proofs as Groth16 or PLONK artifacts verifiable on Ethereum/Solana. A diploma certified on Aleo becomes verifiable in any EVM smart contract — unlocking the entire Web3 ecosystem as verifiers |
+| 14 | **Decentralized Issuer Registry** | Replace admin-gated registration with a staking + reputation model. Issuers stake ALEO tokens to register; slashing occurs for fraudulent certifications. Removes all centralized gatekeeping |
+| 15 | **Governance Token** | Introduce a protocol governance token for fee parameter voting, issuer dispute resolution, staking rewards, and treasury management |
+| 16 | **ZK Credential Composability** | Allow certified records to be used as inputs to other Aleo programs — e.g., a DeFi protocol reads a CloakStamp `VerificationReceipt` to enforce KYC without ever learning the user's identity |
+| 17 | **Institutional API Gateway** | A dedicated enterprise API with SLA guarantees, bulk certification endpoints, webhook callbacks, and compliance reporting — targeting universities, hospitals, HR platforms, and legal firms |
+
+---
+
+### 🎯 Real-World Target Sectors
+
+| Sector | How CloakStamp Helps |
+|--------|---------------------|
+| **Education** | Universities issue tamper-proof digital diplomas. Employers verify degrees instantly without calling admissions offices |
+| **Healthcare** | Patients carry private vaccination records, insurance eligibility proofs, and prescription histories — shareable on demand without exposing full medical history |
+| **Finance & DeFi** | Income attestations, credit scores, and KYC status can be proven to lending protocols privately — enabling compliance without surveillance |
+| **Legal** | Signed contracts, NDAs, and power-of-attorney documents can be attested on-chain without revealing their contents to anyone except the authorized parties |
+| **HR & Recruiting** | Candidates prove employment history, professional licenses, and background checks to employers privately — no central background-check company holding sensitive data |
+| **Government & Identity** | Citizenship attestations, age verification, and residency proofs for digital public services — privacy-preserving e-government |
+
+---
+
+### 💡 The Core Thesis
+
+> **Trust should not require exposure.**  
+> Every time someone has to share their full document to prove a single fact, privacy fails.  
+> CloakStamp makes it possible to prove *exactly what is needed* — and nothing more —  
+> anchored to a immutable, decentralized record that no authority can alter or revoke.
+
+---
 
 ## 📄 License
 
