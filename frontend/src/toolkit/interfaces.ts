@@ -43,6 +43,17 @@ export interface DocStatus {
   chainConfirmed?: boolean;
 }
 
+export interface IssuerProfile {
+  hashedAddr: string;
+  displayName: string;
+  organization: string;
+  description: string;
+  categories: string[];
+  website: string;
+  enrolledAt: string;
+  chainTxRef: string;
+}
+
 export type WalletExecutor = {
   executeTransaction: (params: {
     program: string;

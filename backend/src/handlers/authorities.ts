@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { getStore } from '../core/storage';
 import { readMapping } from '../core/chainReader';
 import { guardian } from '../shield/guardian';
-import { enrollAuthoritySchema } from '../pipelines/schemas';
+import { enrollAuthoritySchema, updateProfileSchema } from '../pipelines/schemas';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ function obscureAddr(addr: string): string {
   return createHash('sha256').update(addr).digest('hex');
 }
 
-// POST /authorities/enroll — record new issuer registration
+// POST /authorities/enroll — record new issuer registration (with optional profile)
 router.post('/enroll', guardian, async (req: Request, res: Response) => {
   try {
     const parsed = enrollAuthoritySchema.safeParse(req.body);
@@ -21,7 +21,7 @@ router.post('/enroll', guardian, async (req: Request, res: Response) => {
       return;
     }
 
-    const { authority, chainTxRef } = parsed.data;
+    const { authority, chainTxRef, displayName, organization, description, categories, website } = parsed.data;
     const hashed = obscureAddr(authority);
 
     const store = await getStore();
@@ -38,6 +38,20 @@ router.post('/enroll', guardian, async (req: Request, res: Response) => {
       chainTxRef,
     };
 
+    // Save issuer profile if provided
+    if (displayName && organization && categories && categories.length > 0) {
+      store.data.issuerProfiles[hashed] = {
+        hashedAddr: hashed,
+        displayName,
+        organization,
+        description: description || '',
+        categories,
+        website: website || '',
+        enrolledAt: new Date().toISOString(),
+        chainTxRef,
+      };
+    }
+
     store.data.auditLog.push({
       uid: uuid(),
       kind: 'authority_enrolled',
@@ -51,6 +65,72 @@ router.post('/enroll', guardian, async (req: Request, res: Response) => {
     res.json({ success: true, authorityHash: hashed });
   } catch (err) {
     console.error('[Authorities] Enroll failed:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST /authorities/profile — create or update issuer profile
+router.post('/profile', guardian, async (req: Request, res: Response) => {
+  try {
+    const parsed = updateProfileSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: 'Validation failed', details: parsed.error.issues });
+      return;
+    }
+
+    const addr = req.walletAddr;
+    if (!addr) { res.status(401).json({ error: 'No wallet address' }); return; }
+    const hashed = obscureAddr(addr);
+
+    const store = await getStore();
+
+    if (!store.data.authorities[hashed]) {
+      res.status(403).json({ error: 'Not a registered issuer' });
+      return;
+    }
+
+    const { displayName, organization, description, categories, website } = parsed.data;
+    const existing = store.data.issuerProfiles[hashed];
+
+    store.data.issuerProfiles[hashed] = {
+      hashedAddr: hashed,
+      displayName,
+      organization,
+      description: description || '',
+      categories,
+      website: website || '',
+      enrolledAt: existing?.enrolledAt || store.data.authorities[hashed].enrolledAt,
+      chainTxRef: existing?.chainTxRef || store.data.authorities[hashed].chainTxRef,
+    };
+
+    await store.write();
+    res.json({ success: true, profile: store.data.issuerProfiles[hashed] });
+  } catch (err) {
+    console.error('[Authorities] Profile update failed:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /authorities/profiles — public list of all issuer profiles
+router.get('/profiles', async (_req: Request, res: Response) => {
+  try {
+    const store = await getStore();
+    const profiles = Object.values(store.data.issuerProfiles);
+    res.json({ profiles });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /authorities/profile/:address — single issuer profile (public)
+router.get('/profile/:address', async (req: Request, res: Response) => {
+  try {
+    const { address } = req.params;
+    const hashed = obscureAddr(address);
+    const store = await getStore();
+    const profile = store.data.issuerProfiles[hashed] || null;
+    res.json({ profile });
+  } catch (err) {
     res.status(500).json({ error: 'Internal server error' });
   }
 });

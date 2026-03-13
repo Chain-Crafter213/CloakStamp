@@ -8,6 +8,8 @@ const CertifyView = lazy(() => import('./views/CertifyView'));
 const MyDocumentsView = lazy(() => import('./views/MyDocumentsView'));
 const ProveView = lazy(() => import('./views/ProveView'));
 const VerifyView = lazy(() => import('./views/VerifyView'));
+const HowItWorksView = lazy(() => import('./views/HowItWorksView'));
+const IssuersView = lazy(() => import('./views/IssuersView'));
 
 export default function Shell() {
   return (
@@ -20,6 +22,8 @@ export default function Shell() {
             <Route path="/documents" element={<MyDocumentsView />} />
             <Route path="/prove" element={<ProveView />} />
             <Route path="/verify" element={<VerifyView />} />
+            <Route path="/how-it-works" element={<HowItWorksView />} />
+            <Route path="/issuers" element={<IssuersView />} />
           </Route>
         </Routes>
       </Suspense>

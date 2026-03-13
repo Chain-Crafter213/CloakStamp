@@ -9,14 +9,14 @@ import { scaleUsdcx } from '../toolkit/stablecoin';
 import { stampDocument, enrollAuthority, checkAuthority, fetchHolderCerts } from '../toolkit/gateway';
 import { useIdentity } from '../composables/useIdentity';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v3.aleo';
 const BASE_FEE = 1_000_000; // 1 ALEO in microcredits — Shield Wallet requires non-zero fee
 const CATEGORIES = [
-  { value: 1, label: 'Academic Credential' },
-  { value: 2, label: 'Professional License' },
-  { value: 3, label: 'Identity Document' },
-  { value: 4, label: 'Medical Record' },
-  { value: 5, label: 'Legal Certificate' },
+  { value: 1, label: 'Academic Credential', bit: 1 },
+  { value: 2, label: 'Professional License', bit: 2 },
+  { value: 3, label: 'Identity Document', bit: 4 },
+  { value: 4, label: 'Medical Record', bit: 8 },
+  { value: 5, label: 'Legal Certificate', bit: 16 },
 ];
 
 export default function CertifyView() {
@@ -31,6 +31,13 @@ export default function CertifyView() {
   const [isIssuer, setIsIssuer] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
   const [registering, setRegistering] = useState(false);
+
+  // Issuer profile fields (collected during registration)
+  const [profileName, setProfileName] = useState('');
+  const [profileOrg, setProfileOrg] = useState('');
+  const [profileDesc, setProfileDesc] = useState('');
+  const [profileWebsite, setProfileWebsite] = useState('');
+  const [profileCategories, setProfileCategories] = useState<string[]>(['Academic']);
 
   const [file, setFile] = useState<File | null>(null);
   const [recipient, setRecipient] = useState('');
@@ -119,18 +126,30 @@ export default function CertifyView() {
 
       const regFee = 50_000; // 0.05 ALEO registration fee in microcredits
 
+      // Compute category bitfield from selected profile categories
+      const categoryBitfield = profileCategories.reduce((bits, cat) => {
+        const found = CATEGORIES.find(c => c.label.startsWith(cat));
+        return bits | (found?.bit || 0);
+      }, 0);
+
       // self_register_issuer — permissionless, any user can call this
       const result = await executeTransaction({
         program: PROGRAM_ID,
         function: 'self_register_issuer',
-        inputs: [recordPlaintext, `${regFee}u64`],
+        inputs: [recordPlaintext, `${regFee}u64`, `${categoryBitfield}field`],
         fee: BASE_FEE,
         privateFee: false,
       });
 
       const txId = result?.transactionId || result;
       push(String(txId), 'Register as Issuer');
-      await enrollAuthority(addr, String(txId), sess);
+      await enrollAuthority(addr, String(txId), sess, {
+        displayName: profileName,
+        organization: profileOrg,
+        description: profileDesc,
+        categories: profileCategories,
+        website: profileWebsite,
+      });
       setIsIssuer(true);
     } catch (e: any) {
       setError(e?.message || 'Registration failed');
@@ -303,9 +322,21 @@ export default function CertifyView() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-4xl font-inter font-bold text-white mb-2">Certify Document</h1>
-        <p className="text-gray-400 font-manrope mb-10">
+        <p className="text-gray-400 font-manrope mb-6">
           Issue a privacy-preserving certification for any document on Aleo.
         </p>
+
+        {/* Privacy banner */}
+        <div className="mb-8 bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex items-start gap-3">
+          <span className="text-xl shrink-0">🔒</span>
+          <div>
+            <p className="text-emerald-400 font-sora font-semibold text-sm mb-1">Your file never leaves your device</p>
+            <p className="text-xs text-gray-400 font-manrope leading-relaxed">
+              When you upload a document, only its cryptographic hash (SHA-256 → BHP256) is computed in your browser.
+              The original file is never sent to our servers or the blockchain. Only a one-way commitment is stored on-chain as a boolean flag.
+            </p>
+          </div>
+        </div>
 
         {/* Issuer check */}
         {isIssuer === null && !checking && (
@@ -326,10 +357,69 @@ export default function CertifyView() {
             <p className="text-yellow-400 font-manrope mb-2">
               You are not yet registered as an issuer on the protocol.
             </p>
-            <p className="text-gray-400 font-manrope text-sm mb-4">
-              Registration costs 0.05 ALEO (one-time fee). Once registered, you can certify documents for any holder with full privacy.
+            <p className="text-gray-400 font-manrope text-sm mb-6">
+              Registration costs 0.05 ALEO (one-time fee). Fill in your issuer profile and select the categories you'll certify.
+              Your allowed categories are enforced on-chain — you can only certify documents in selected categories.
             </p>
-            <ActionButton onClick={registerAsIssuer} loading={registering}>
+
+            <div className="space-y-4 mb-6">
+              {/* Display name */}
+              <div>
+                <label className="block text-sm font-manrope text-gray-300 mb-1">Display Name *</label>
+                <input type="text" value={profileName} onChange={e => setProfileName(e.target.value)}
+                  placeholder="e.g. Dr. Jane Smith" className="w-full bg-white/5 border border-cs-border/30 rounded-xl px-4 py-2.5 text-white placeholder:text-gray-600 font-manrope text-sm focus:outline-none focus:border-cs-primary/50" />
+              </div>
+
+              {/* Organization */}
+              <div>
+                <label className="block text-sm font-manrope text-gray-300 mb-1">Organization *</label>
+                <input type="text" value={profileOrg} onChange={e => setProfileOrg(e.target.value)}
+                  placeholder="e.g. MIT, General Hospital, Acme Corp" className="w-full bg-white/5 border border-cs-border/30 rounded-xl px-4 py-2.5 text-white placeholder:text-gray-600 font-manrope text-sm focus:outline-none focus:border-cs-primary/50" />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-manrope text-gray-300 mb-1">Description</label>
+                <textarea value={profileDesc} onChange={e => setProfileDesc(e.target.value)}
+                  placeholder="Brief description of your issuing authority..."
+                  rows={2} className="w-full bg-white/5 border border-cs-border/30 rounded-xl px-4 py-2.5 text-white placeholder:text-gray-600 font-manrope text-sm focus:outline-none focus:border-cs-primary/50 resize-none" />
+              </div>
+
+              {/* Website */}
+              <div>
+                <label className="block text-sm font-manrope text-gray-300 mb-1">Website</label>
+                <input type="url" value={profileWebsite} onChange={e => setProfileWebsite(e.target.value)}
+                  placeholder="https://..." className="w-full bg-white/5 border border-cs-border/30 rounded-xl px-4 py-2.5 text-white placeholder:text-gray-600 font-manrope text-sm focus:outline-none focus:border-cs-primary/50" />
+              </div>
+
+              {/* Categories */}
+              <div>
+                <label className="block text-sm font-manrope text-gray-300 mb-2">Certification Categories *</label>
+                <p className="text-xs text-gray-500 font-manrope mb-2">Select which types of documents you will certify. This is enforced on-chain.</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Academic', 'Professional', 'Identity', 'Medical', 'Legal'].map(cat => (
+                    <button key={cat} type="button"
+                      onClick={() => setProfileCategories(prev =>
+                        prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+                      )}
+                      className={`px-3 py-1.5 rounded-full text-xs font-manrope transition-all border ${
+                        profileCategories.includes(cat)
+                          ? 'bg-cs-primary/20 text-cs-primary border-cs-primary/40'
+                          : 'bg-white/5 text-gray-400 border-cs-border/30 hover:text-white'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <ActionButton
+              onClick={registerAsIssuer}
+              loading={registering}
+              disabled={!profileName || !profileOrg || profileCategories.length === 0}
+            >
               Register as Issuer (0.05 ALEO)
             </ActionButton>
           </GlassCard>
@@ -423,7 +513,10 @@ export default function CertifyView() {
               {result && (
                 <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30">
                   <p className="text-green-400 text-sm font-manrope mb-1">Certification submitted!</p>
-                  <p className="text-xs text-gray-400 font-mono break-all">{result}</p>
+                  <p className="text-xs text-gray-400 font-mono break-all mb-2">{result}</p>
+                  <p className="text-xs text-emerald-400/70 font-manrope">
+                    🔒 Your document is NOT stored on any server. Only you and the holder have the encrypted certificate record in your wallets.
+                  </p>
                 </div>
               )}
             </div>

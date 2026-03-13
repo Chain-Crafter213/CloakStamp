@@ -93,9 +93,21 @@ export default function VerifyView() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-4xl font-inter font-bold text-white mb-2">Verify</h1>
-        <p className="text-gray-400 font-manrope mb-10">
+        <p className="text-gray-400 font-manrope mb-6">
           Validate a document certification or verification proof on-chain. No wallet required.
         </p>
+
+        {/* Privacy notice */}
+        <div className="mb-8 bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
+          <span className="text-xl shrink-0">🔍</span>
+          <div>
+            <p className="text-blue-400 font-sora font-semibold text-sm mb-1">Privacy-preserving verification</p>
+            <p className="text-xs text-gray-400 font-manrope leading-relaxed">
+              You are verifying a cryptographic commitment — a one-way hash. No document content, holder identity,
+              or issuer identity is revealed to you during this process. You only learn whether the document is valid and non-revoked.
+            </p>
+          </div>
+        </div>
 
         <GlassCard>
           <div className="space-y-6">

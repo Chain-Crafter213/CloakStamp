@@ -7,7 +7,7 @@ import { ShieldWalletAdapter } from '@provablehq/aleo-wallet-adaptor-shield';
 import { Network } from '@provablehq/aleo-types';
 import '@provablehq/aleo-wallet-adaptor-react-ui/dist/styles.css';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v3.aleo';
 
 interface Props {
   children: ReactNode;

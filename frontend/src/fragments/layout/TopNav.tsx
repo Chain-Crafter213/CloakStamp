@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { to: '/documents', label: 'My Docs' },
   { to: '/prove', label: 'Prove' },
   { to: '/verify', label: 'Verify' },
+  { to: '/how-it-works', label: 'How It Works' },
+  { to: '/issuers', label: 'Issuers' },
 ];
 
 export default function TopNav() {

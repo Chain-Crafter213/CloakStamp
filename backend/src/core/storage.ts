@@ -5,6 +5,7 @@ import type { Datastore } from '../definitions';
 
 const blankState: Datastore = {
   authorities: {},
+  issuerProfiles: {},
   certifications: {},
   proofEntries: {},
   challengeTokens: {},
@@ -22,6 +23,10 @@ export async function bootStorage(): Promise<void> {
   await store.read();
   if (!store.data || !store.data.authorities) {
     store.data = blankState;
+    await store.write();
+  }
+  if (!store.data.issuerProfiles) {
+    store.data.issuerProfiles = {};
     await store.write();
   }
   booted = true;

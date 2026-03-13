@@ -1,4 +1,4 @@
-import type { ProtocolMetrics, ProtocolFees, CertificationRecord, ProofRecord, DocStatus } from './interfaces';
+import type { ProtocolMetrics, ProtocolFees, CertificationRecord, ProofRecord, DocStatus, IssuerProfile } from './interfaces';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
@@ -46,12 +46,13 @@ export async function fetchProtocolFees(): Promise<ProtocolFees> {
 export async function enrollAuthority(
   authority: string,
   chainTxRef: string,
-  session: string
+  session: string,
+  profile?: { displayName: string; organization: string; description: string; categories: string[]; website: string }
 ): Promise<{ success: boolean; authorityHash: string }> {
   const resp = await fetch(`${API_BASE}/authorities/enroll`, {
     method: 'POST',
     headers: headers(session),
-    body: JSON.stringify({ authority, chainTxRef }),
+    body: JSON.stringify({ authority, chainTxRef, ...profile }),
   });
   return resp.json();
 }
@@ -63,6 +64,29 @@ export async function checkAuthority(address: string): Promise<{ enrolled: boole
 
 export async function fetchAuthorityCount(): Promise<{ total: number }> {
   const resp = await fetch(`${API_BASE}/authorities/count`);
+  return resp.json();
+}
+
+// Issuer Profiles
+export async function fetchIssuerProfiles(): Promise<{ profiles: IssuerProfile[] }> {
+  const resp = await fetch(`${API_BASE}/authorities/profiles`);
+  return resp.json();
+}
+
+export async function fetchIssuerProfile(address: string): Promise<{ profile: IssuerProfile | null }> {
+  const resp = await fetch(`${API_BASE}/authorities/profile/${address}`);
+  return resp.json();
+}
+
+export async function updateIssuerProfile(
+  data: { displayName: string; organization: string; description: string; categories: string[]; website: string },
+  session: string
+): Promise<{ success: boolean; profile: IssuerProfile }> {
+  const resp = await fetch(`${API_BASE}/authorities/profile`, {
+    method: 'POST',
+    headers: headers(session),
+    body: JSON.stringify(data),
+  });
   return resp.json();
 }
 

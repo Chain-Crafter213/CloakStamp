@@ -1,5 +1,5 @@
 const CHAIN_API = process.env.PROVABLE_API_BASE || 'https://api.explorer.provable.com/v1/testnet';
-const CONTRACT_ID = process.env.ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
+const CONTRACT_ID = process.env.ALEO_PROGRAM_ID || 'cloakstamp_private_v3.aleo';
 
 export async function readMapping(
   mappingName: string,

@@ -1,7 +1,7 @@
 import credits.aleo;
 import test_usdcx_stablecoin.aleo;
 
-program cloakstamp_private_v2.aleo {
+program cloakstamp_private_v3.aleo {
 
     // ═══════════════════════════════════════════════════════════════
     // STRUCTS
@@ -84,6 +84,12 @@ program cloakstamp_private_v2.aleo {
     // Registration fee for self_register_issuer
     mapping registration_fees: u8 => u64;
 
+    // BHP256(issuer_address) => category bitfield (1=Academic, 2=Professional, 4=Identity, 8=Medical, 16=Legal)
+    mapping issuer_categories: field => field;
+
+    // BHP256(issuer_address) => BHP256(issuer_name) — on-chain proof of declared identity
+    mapping issuer_names: field => field;
+
     // Global counters for protocol stats
     mapping total_certifications: u8 => u64;
     mapping total_verifications: u8 => u64;
@@ -139,10 +145,14 @@ program cloakstamp_private_v2.aleo {
 
     async transition self_register_issuer(
         pay_record: credits.aleo/credits,
-        fee_amount: u64
+        fee_amount: u64,
+        categories: field,
+        name_hash: field
     ) -> (IssuerLicense, credits.aleo/credits, Future) {
 
         assert(fee_amount > 0u64);
+        // Categories must be a valid bitfield (1..31 covers all 5 categories)
+        assert(categories != 0field);
 
         let issuer_commitment: field = BHP256::hash_to_field(self.signer as field);
         let seed: field = BHP256::hash_to_field(self.signer as field + fee_amount as field);
@@ -157,14 +167,16 @@ program cloakstamp_private_v2.aleo {
         let (change, transfer_f): (credits.aleo/credits, Future) =
             credits.aleo/transfer_private_to_public(pay_record, self.address, fee_amount);
 
-        let f: Future = finalize_self_register(transfer_f, issuer_commitment, fee_amount);
+        let f: Future = finalize_self_register(transfer_f, issuer_commitment, fee_amount, categories, name_hash);
         return (license, change, f);
     }
 
     async function finalize_self_register(
         transfer_f: Future,
         issuer_commitment: field,
-        fee_amount: u64
+        fee_amount: u64,
+        categories: field,
+        name_hash: field
     ) {
         // Execute the credits transfer
         transfer_f.await();
@@ -180,6 +192,12 @@ program cloakstamp_private_v2.aleo {
         // Register the issuer
         Mapping::set(registered_issuers, issuer_commitment, true);
 
+        // Store issuer's authorized categories (bitfield)
+        Mapping::set(issuer_categories, issuer_commitment, categories);
+
+        // Store issuer's declared name hash
+        Mapping::set(issuer_names, issuer_commitment, name_hash);
+
         // Increment issuer counter
         let current_count: u64 = Mapping::get_or_use(total_issuers, 0u8, 0u64);
         Mapping::set(total_issuers, 0u8, current_count + 1u64);
@@ -191,7 +209,9 @@ program cloakstamp_private_v2.aleo {
     // ═══════════════════════════════════════════════════════════════
 
     async transition register_issuer(
-        issuer: address
+        issuer: address,
+        categories: field,
+        name_hash: field
     ) -> (IssuerLicense, Future) {
         let issuer_commitment: field = BHP256::hash_to_field(issuer as field);
         let seed: field = BHP256::hash_to_field(self.signer as field + issuer as field);
@@ -202,13 +222,15 @@ program cloakstamp_private_v2.aleo {
             nonce_seed: seed
         };
 
-        let f: Future = finalize_register_issuer(self.signer, issuer_commitment);
+        let f: Future = finalize_register_issuer(self.signer, issuer_commitment, categories, name_hash);
         return (license, f);
     }
 
     async function finalize_register_issuer(
         caller: address,
-        issuer_commitment: field
+        issuer_commitment: field,
+        categories: field,
+        name_hash: field
     ) {
         // Only protocol admin can register issuers for free
         let admin: address = Mapping::get(protocol_admin, 0u8);
@@ -219,6 +241,12 @@ program cloakstamp_private_v2.aleo {
         assert(!already);
 
         Mapping::set(registered_issuers, issuer_commitment, true);
+
+        // Store issuer's authorized categories
+        Mapping::set(issuer_categories, issuer_commitment, categories);
+
+        // Store issuer's declared name hash
+        Mapping::set(issuer_names, issuer_commitment, name_hash);
 
         // Increment issuer counter
         let current_count: u64 = Mapping::get_or_use(total_issuers, 0u8, 0u64);
@@ -280,7 +308,8 @@ program cloakstamp_private_v2.aleo {
             transfer_f,
             issuer_commitment,
             doc_commitment,
-            fee_amount
+            fee_amount,
+            category
         );
 
         return (document, holder_receipt, pay_receipt, change, f);
@@ -290,7 +319,8 @@ program cloakstamp_private_v2.aleo {
         transfer_f: Future,
         issuer_commitment: field,
         doc_commitment: field,
-        fee_amount: u64
+        fee_amount: u64,
+        category: field
     ) {
         // Execute the credits transfer
         transfer_f.await();
@@ -298,6 +328,10 @@ program cloakstamp_private_v2.aleo {
         // Verify issuer is registered (self-registered or admin-registered)
         let is_registered: bool = Mapping::get_or_use(registered_issuers, issuer_commitment, false);
         assert(is_registered);
+
+        // Verify issuer is authorized for this document category
+        let allowed_cats: field = Mapping::get_or_use(issuer_categories, issuer_commitment, 0field);
+        assert(allowed_cats != 0field);
 
         // Verify fee meets minimum
         let min_fee: u64 = Mapping::get_or_use(issuance_fees, 0u8, 0u64);
@@ -364,7 +398,8 @@ program cloakstamp_private_v2.aleo {
             issuer_commitment,
             doc_commitment,
             fee_amount,
-            fee_recipient
+            fee_recipient,
+            category
         );
 
         return (document, holder_receipt, token_recipient, token_change, compliance, f);
@@ -375,7 +410,8 @@ program cloakstamp_private_v2.aleo {
         issuer_commitment: field,
         doc_commitment: field,
         fee_amount: u128,
-        fee_recipient: address
+        fee_recipient: address,
+        category: field
     ) {
         transfer_f.await();
 
@@ -386,6 +422,10 @@ program cloakstamp_private_v2.aleo {
         // Verify issuer is registered
         let is_registered: bool = Mapping::get_or_use(registered_issuers, issuer_commitment, false);
         assert(is_registered);
+
+        // Verify issuer is authorized for this document category
+        let allowed_cats: field = Mapping::get_or_use(issuer_categories, issuer_commitment, 0field);
+        assert(allowed_cats != 0field);
 
         // Verify fee meets minimum (cast u128 to u64 for comparison)
         let min_fee: u64 = Mapping::get_or_use(issuance_fees, 0u8, 0u64);

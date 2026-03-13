@@ -7,7 +7,7 @@ import { ActionButton, GlassCard } from '../fragments/shared';
 import { submitProof } from '../toolkit/gateway';
 import { useIdentity } from '../composables/useIdentity';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v3.aleo';
 const BASE_FEE = 1_000_000; // 1 ALEO in microcredits
 
 /** Extract plaintext string from a record returned by requestRecords() */
@@ -203,9 +203,21 @@ export default function ProveView() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-4xl font-inter font-bold text-white mb-2">Prove Ownership</h1>
-        <p className="text-gray-400 font-manrope mb-10">
+        <p className="text-gray-400 font-manrope mb-6">
           Generate a zero-knowledge proof that you hold a certified document, without revealing its content.
         </p>
+
+        {/* Privacy explainer */}
+        <div className="mb-8 bg-violet-500/5 border border-violet-500/20 rounded-xl p-4 flex items-start gap-3">
+          <span className="text-xl shrink-0">🛡️</span>
+          <div>
+            <p className="text-violet-400 font-sora font-semibold text-sm mb-1">What the verifier receives</p>
+            <p className="text-xs text-gray-400 font-manrope leading-relaxed">
+              The verifier gets a VerificationReceipt confirming the document exists, is not revoked, and is not expired.
+              They <strong className="text-white">never see</strong> the document content, your identity, the issuer identity, or the payment amount.
+            </p>
+          </div>
+        </div>
 
         <GlassCard>
           <div className="space-y-6">

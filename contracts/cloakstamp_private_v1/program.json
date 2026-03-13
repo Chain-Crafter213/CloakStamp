@@ -1,5 +1,5 @@
 {
-  "program": "cloakstamp_private_v2.aleo",
+  "program": "cloakstamp_private_v3.aleo",
   "version": "1.0.0",
   "description": "CloakStamp — Privacy-first document certification and verification protocol on Aleo",
   "license": "MIT",

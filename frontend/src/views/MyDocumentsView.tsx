@@ -408,7 +408,7 @@ export default function MyDocumentsView() {
               My Documents
             </motion.h1>
             <motion.p
-              className="text-white/40 font-manrope text-lg"
+              className="text-white/40 font-manrope text-lg mb-0"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -431,6 +431,21 @@ export default function MyDocumentsView() {
             </motion.div>
           )}
         </div>
+
+        {/* Privacy notice */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="mb-8 bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex items-start gap-3"
+        >
+          <span className="text-lg shrink-0">🔒</span>
+          <p className="text-xs text-gray-400 font-manrope leading-relaxed">
+            These are <strong className="text-emerald-400">encrypted certificate records</strong> stored in your wallet.
+            The original documents exist only on your device — they are never uploaded to any server or the blockchain.
+            Only you can decrypt and view these records.
+          </p>
+        </motion.div>
 
         {/* ──── Loading ──── */}
         {loading && <Spinner className="my-12" />}

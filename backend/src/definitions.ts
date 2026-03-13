@@ -28,6 +28,17 @@ export interface ProofEntry {
   stampedAt: string;
 }
 
+export interface IssuerProfile {
+  hashedAddr: string;
+  displayName: string;
+  organization: string;
+  description: string;
+  categories: string[];
+  website: string;
+  enrolledAt: string;
+  chainTxRef: string;
+}
+
 export interface AuditEntry {
   uid: string;
   kind: 'authority_enrolled' | 'doc_certified' | 'doc_revoked' | 'doc_proved' | 'proof_recorded';
@@ -38,6 +49,7 @@ export interface AuditEntry {
 
 export interface Datastore {
   authorities: Record<string, CertAuthority>;
+  issuerProfiles: Record<string, IssuerProfile>;
   certifications: Record<string, Certification>;
   proofEntries: Record<string, ProofEntry>;
   challengeTokens: Record<string, string>;

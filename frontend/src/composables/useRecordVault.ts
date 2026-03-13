@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useWallet } from '@provablehq/aleo-wallet-adaptor-react';
 import { parseRecordFields, fetchCiphertextFromBlock } from '../toolkit/chain';
 
-const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v2.aleo';
+const PROGRAM_ID = import.meta.env.VITE_ALEO_PROGRAM_ID || 'cloakstamp_private_v3.aleo';
 
 export interface DecodedRecord {
   type: string;

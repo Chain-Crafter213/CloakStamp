@@ -28,6 +28,8 @@ export default function SiteFooter() {
                 { to: '/documents', label: 'My Documents' },
                 { to: '/prove', label: 'Prove Ownership' },
                 { to: '/verify', label: 'Verify Proof' },
+                { to: '/how-it-works', label: 'How It Works' },
+                { to: '/issuers', label: 'Issuers' },
               ].map((link) => (
                 <li key={link.to}>
                   <Link
